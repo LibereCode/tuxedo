@@ -5,7 +5,8 @@
   versionCheckHook,
 }:
 let
-  cargoToml = fromTOML (builtins.readFile ./Cargo.toml);
+  repoRoot = ../../.;
+  cargoToml = fromTOML (builtins.readFile (repoRoot + /Cargo.toml));
   inherit (cargoToml.package) version;
 in
 
@@ -14,9 +15,9 @@ rustPlatform.buildRustPackage (finalAttrs: {
   inherit version;
   __structuredAttrs = true;
 
-  src = lib.cleanSource ./.;
+  src = lib.cleanSource repoRoot;
 
-  cargoLock.lockFile = ./Cargo.lock;
+  cargoLock.lockFile = repoRoot + /Cargo.lock;
 
   nativeCheckInputs = [ writableTmpDirAsHomeHook ];
 
