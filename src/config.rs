@@ -250,6 +250,14 @@ fn serialize(c: &Config) -> String {
     out
 }
 
+/// Remove first and last **"** char if `s` is quoted.
+/// # Examples
+/// ```rust
+/// let foo = "\"foo\"";
+/// let bar = "bar";
+/// assert_eq!(unquote(foo), "foo"); // "quotes" removed
+/// assert_eq!(unquote(bar), bar);   // no change
+/// ```
 fn unquote(s: &str) -> &str {
     let b = s.as_bytes();
     if b.len() >= 2 && b[0] == b'"' && b[b.len() - 1] == b'"' {
@@ -259,6 +267,10 @@ fn unquote(s: &str) -> &str {
     }
 }
 
+/// Parse a string "boolean" into an actual boolean
+/// **"true"|"on"|"yes"|"1"** => `true`
+/// **"false"|"off"|"no"|"0"** => `false`
+/// else => None
 fn parse_bool(s: &str) -> Option<bool> {
     match s {
         "true" | "on" | "yes" | "1" => Some(true),

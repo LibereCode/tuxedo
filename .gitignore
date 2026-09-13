@@ -5,6 +5,7 @@ target
 /result
 
 .gitignore
+.nvim.lua
 
 # Devenv
 .devenv*
