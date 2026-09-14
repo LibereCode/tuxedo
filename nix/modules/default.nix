@@ -29,26 +29,28 @@
 
             ## XXX Is this dumb?
             settings = lib.mkOption {
-              inherit (tomlFormat) type;
+              type = lib.types.nullOr tomlFormat.type;
               description = ''
                 Generated config.toml written to
                 {file}`$XDG_CONFIG_HOME/tuxedo/config.toml`
 
                 See more at <https://github.com/LibereCode/tuxedo/tree/feat/quoted_config.toml#configuration>
               '';
-              default = { };
-              example = { };
+              default = null;
+              example = {
+                #TODO:
+              };
             };
 
             keybinds = lib.mkOption {
-              inherit (tomlFormat) type;
+              type = lib.types.nullOr tomlFormat.type;
               description = ''
                 Generated keybinds.toml written to
                 {file}`$XDG_CONFIG_HOME/tuxedo/keybinds.toml`
 
                 See more at <https://github.com/LibereCode/tuxedo/tree/feat/quoted_config.toml#keybindings>
               '';
-              default = { };
+              default = null;
               example = {
                 normal = {
                   begin_edit_insert = [
@@ -108,20 +110,23 @@
         config = lib.mkIf cfg.enable {
           home.packages = [ cfg.package ];
 
-          xdg.configFile = {
-            ## cfg.settings
-            "tuxedo/config.toml".source = pkgs.writers.writeTOML "tuxedo_config.toml" cfg.settings;
-
-            ## cfg.keybinds
-            "tuxedo/keybinds.toml".source = pkgs.writers.writeTOML "tuxedo_keybinds.toml" cfg.keybinds;
-          }
-          ## cfg.themes.<name>
-          // lib.mapAttrs' (
-            n: v:
-            lib.nameValuePair ("tuxedo/themes/" + n + ".toml") {
-              source = pkgs.writers.writeTOML "tuxedo_theme_${n}.toml" v;
+          xdg.configFile =
+            { }
+            // lib.optionalAttrs (cfg.settings != null) {
+              ## cfg.settings
+              "tuxedo/config.toml".source = pkgs.writers.writeTOML "tuxedo_config.toml" cfg.settings;
             }
-          ) cfg.themes;
+            // lib.optionalAttrs (cfg.keybinds != null) {
+              ## cfg.keybinds
+              "tuxedo/keybinds.toml".source = pkgs.writers.writeTOML "tuxedo_keybinds.toml" cfg.keybinds;
+            }
+            ## cfg.themes.<name>
+            // lib.mapAttrs' (
+              n: v:
+              lib.nameValuePair ("tuxedo/themes/" + n + ".toml") {
+                source = pkgs.writers.writeTOML "tuxedo_theme_${n}.toml" v;
+              }
+            ) cfg.themes;
         };
       };
   };
