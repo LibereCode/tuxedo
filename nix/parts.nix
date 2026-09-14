@@ -3,8 +3,10 @@
 }:
 {
   imports = [
-    ./packages
+    ./modules
     ./overlays.nix
+    ./packages
+    ./tests
   ];
 
   systems = [
