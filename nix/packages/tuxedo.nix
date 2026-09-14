@@ -3,6 +3,7 @@
   rustPlatform,
   writableTmpDirAsHomeHook,
   versionCheckHook,
+  fetchFromGitHub,
 }:
 let
   repoRoot = ../../.;
@@ -15,7 +16,12 @@ rustPlatform.buildRustPackage (finalAttrs: {
   inherit version;
   __structuredAttrs = true;
 
-  src = lib.cleanSource repoRoot;
+  src = fetchFromGitHub {
+    owner = "LibereCode";
+    repo = "tuxedo";
+    rev = "30be4df";
+    hash = "sha256-oOA6e5auhvGaD8PL6JyVOuPm3dVnOHJWi71RHStRb6Y=";
+  };
 
   cargoLock.lockFile = repoRoot + /Cargo.lock;
 
